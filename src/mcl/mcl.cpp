@@ -18,13 +18,20 @@ namespace localization {
         running = true;
 
         // Initialize particles around the start pose
-        std::vector<particle> particles;
-        for (int i = 0; i < particleCount; i++) {
-            particles[i].x = normal.operator() + startPose.x
-            particles[i].y = normal.operator() + startPose.y
-            particles[i].theta = normal.operator() + startPose.theta
-            particles[i].weight = 0 // start with no weight as there is no distance data yet
+
+        if (global) {
+            std::vector<particle> particles;
+            for (int i = 0; i < particleCount; i++) {
+                particles[i].x = normal.operator() + startPose.x
+                particles[i].y = normal.operator() + startPose.y
+                particles[i].theta = normal.operator() + startPose.theta
+                particles[i].weight = 0 // start with no weight as there is no distance data yet
+            }
+            
+            
+            pros::Task mclTask(update);
         }
+
     }
 
     void MCL::disable() {
@@ -40,6 +47,8 @@ namespace localization {
     }
 
     void MCL::update() {
-        // Update implementation
+        
+
+        pros::delay(20);
     }
 }

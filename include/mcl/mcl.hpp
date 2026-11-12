@@ -29,7 +29,7 @@ namespace localization {
 
     class MCL {
     public:
-        MCL(lemlib::chassis chassis, std::vector<distSensor> sensors, field field);
+        MCL(lemlib::chassis chassis, std::vector<distSensor> sensors, field field, rd::Console console);
         ~MCL();
 
         // You should use nonglobal system like 99% of the time as to be able to set an initial start pose
