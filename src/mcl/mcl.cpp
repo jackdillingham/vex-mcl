@@ -19,15 +19,19 @@ namespace localization {
 
         // Initialize particles around the start pose
 
-        if (global) {
+        if (!global) {
             std::vector<particle> particles;
             for (int i = 0; i < particleCount; i++) {
-                particles[i].x = normal.operator() + startPose.x
-                particles[i].y = normal.operator() + startPose.y
-                particles[i].theta = normal.operator() + startPose.theta
-                particles[i].weight = 0 // start with no weight as there is no distance data yet
+                particles[i].x = normal.operator() + startPose.x;
+                particles[i].y = normal.operator() + startPose.y;
+                particles[i].theta = normal.operator() + startPose.theta;
+                particles[i].weight = 0; // start with no weight as there is no distance data yet
             }
             
+            lemlib::Pose oldPose = startPose;
+            lemlib::Pose newPose = startPose;
+
+            int particleNumber = particleCount;
             
             pros::Task mclTask(update);
         }
@@ -47,7 +51,17 @@ namespace localization {
     }
 
     void MCL::update() {
+        // STEP 1: propagation step
+        // 
+        // The robot takes in deltaPose using odometry and prpagates all particles in the same way as the bot moved
         
+        
+
+        for (int i = 0; i < particleNumber; i++) {
+            particle[i].x += deltaPose.x;
+            particle[i].y += deltaPose.y;
+            particle[i].theta += deltaPose.theta;
+        }
 
         pros::delay(20);
     }

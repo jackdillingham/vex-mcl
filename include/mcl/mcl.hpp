@@ -33,7 +33,7 @@ namespace localization {
         ~MCL();
 
         // You should use nonglobal system like 99% of the time as to be able to set an initial start pose
-        void enable(lemlib::Pose startPose, int particleCount = 200, bool global = false);
+        void enable(lemlib::Pose startPose, global int particleCount = 200, bool global = false);
         void disable();
         void setPose(); // manual intervention
         bool isEnabled();
@@ -41,6 +41,11 @@ namespace localization {
     private:
         bool running = false;
         void update();
+        int particleNumber;
+        
+        lemlib::Pose newPose;
+        lemlib::Pose oldPose;
+        lemlib::Pose deltaPose;
 
         std::normal_distribution<double> normal(0.0, 1.0); //mean, standard deviation
 
