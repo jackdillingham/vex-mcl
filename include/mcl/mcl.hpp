@@ -1,18 +1,36 @@
 #ifndef MCL_HPP
 #define MCL_HPP
 
+#include <api.h>
+#include <lemlib/lemlib.hpp>
+
 #include <algorithm>
 #include <vector>
 #include <cmath>
 #include <random>
 
+//using namespace pros;
+
 namespace localization {
+
+    struct pose {
+        double x;
+        double y;
+        double theta;
+    };
 
     struct particle {
         double x;
         double y;
         double theta;
         double weight;
+    };
+
+    struct expectedDistanceValue {
+        double front;
+        double right;
+        double back;
+        double left;
     };
 
     struct distSensor {
@@ -27,13 +45,20 @@ namespace localization {
         float y;
     };
 
+    enum wall {
+        UP = 0,
+        RIGHT = 90,
+        DOWN = 180,
+        LEFT = 270
+    };
+
     class MCL {
     public:
         MCL(lemlib::chassis chassis, std::vector<distSensor> sensors, field field, rd::Console console);
         ~MCL();
 
         // You should use nonglobal system like 99% of the time as to be able to set an initial start pose
-        void enable(lemlib::Pose startPose, global int particleCount = 200, bool global = false);
+        void enable(pose startPose, int particleCount = 200, bool global = false);
         void disable();
         void setPose(); // manual intervention
         bool isEnabled();
@@ -43,11 +68,17 @@ namespace localization {
         void update();
         int particleNumber;
         
-        lemlib::Pose newPose;
-        lemlib::Pose oldPose;
-        lemlib::Pose deltaPose;
+        pose newPose;
+        pose oldPose;
+        pose deltaPose;
 
-        std::normal_distribution<double> normal(0.0, 1.0); //mean, standard deviation
+        lemlib::Chassis chassis;
+
+        std::normal_distribution<double> normal{0.0, 1.0}; //mean, standard deviation
+
+        double mmToIn(double mm);
+        double wrapAngle(double angle, bool radians = false);
+        double traceRayToWallDistance(pose robotPose, field fieldDimensions, int maxRange = 124);
 
     };
 }
