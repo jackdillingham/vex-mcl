@@ -1,8 +1,8 @@
 #ifndef MCL_HPP
 #define MCL_HPP
 
-#include <api.h>
-#include <lemlib/lemlib.hpp>
+#include "api.h"
+#include "lemlib/tracking/TrackingWheelOdom.hpp"
 
 #include <algorithm>
 #include <vector>
@@ -10,6 +10,10 @@
 #include <random>
 
 //using namespace pros;
+
+namespace rd {
+    class Console;
+}
 
 namespace localization {
 
@@ -54,7 +58,7 @@ namespace localization {
 
     class MCL {
     public:
-        MCL(lemlib::chassis chassis, std::vector<distSensor> sensors, field field, rd::Console console);
+        MCL(lemlib::TrackingWheelOdometry& odom, std::vector<distSensor> sensors, field field, rd::Console& console);
         ~MCL();
 
         // You should use nonglobal system like 99% of the time as to be able to set an initial start pose
@@ -67,12 +71,13 @@ namespace localization {
         bool running = false;
         void update();
         int particleNumber;
+        std::vector<particle> particles;
         
         pose newPose;
         pose oldPose;
         pose deltaPose;
 
-        lemlib::Chassis chassis;
+        lemlib::TrackingWheelOdometry& odom;
 
         std::normal_distribution<double> normal{0.0, 1.0}; //mean, standard deviation
 
