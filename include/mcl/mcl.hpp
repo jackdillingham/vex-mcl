@@ -2,7 +2,8 @@
 #define MCL_HPP
 
 #include "api.h"
-#include "lemlib/tracking/TrackingWheelOdom.hpp"
+#include "lemlib/api.hpp"
+#include "robodash/views/console.hpp"
 
 #include <algorithm>
 #include <vector>
@@ -10,10 +11,6 @@
 #include <random>
 
 //using namespace pros;
-
-namespace rd {
-    class Console;
-}
 
 namespace localization {
 
@@ -44,6 +41,13 @@ namespace localization {
         float theta;
     };
 
+    struct sensorConfig {
+        distSensor front;
+        distSensor right;
+        distSensor back;
+        distSensor left;
+    };
+
     struct field {
         float x;
         float y;
@@ -56,12 +60,23 @@ namespace localization {
         LEFT = 270
     };
 
+    enum sensor {
+        UP = 0,
+        RIGHT = 90,
+        DOWN = 180,
+        LEFT = 270
+    };
+
     class MCL {
     public:
-        MCL(lemlib::TrackingWheelOdometry& odom, std::vector<distSensor> sensors, field field, rd::Console& console);
+        MCL(lemlib::Chassis& chassis, sensorConfig sensors, field field, rd::Console& console);
         ~MCL();
 
-        // You should use nonglobal system like 99% of the time as to be able to set an initial start pose
+        /*
+        @brief This function enables
+        
+        
+        */
         void enable(pose startPose, int particleCount = 200, bool global = false);
         void disable();
         void setPose(); // manual intervention
@@ -77,13 +92,15 @@ namespace localization {
         pose oldPose;
         pose deltaPose;
 
-        lemlib::TrackingWheelOdometry& odom;
+        lemlib::Chassis& chassis;
+        rd::Console& console;
+        
 
         std::normal_distribution<double> normal{0.0, 1.0}; //mean, standard deviation
 
         double mmToIn(double mm);
         double wrapAngle(double angle, bool radians = false);
-        double traceRayToWallDistance(pose robotPose, field fieldDimensions, int maxRange = 124);
+        double traceRayToWallDistance(pose robotPose, field fieldDimensions, wall selectedWall, sensor selectedSensor, int maxRange = 124);
 
     };
 }

@@ -16,13 +16,19 @@ namespace localization {
     double MCL::mmToIn(double mm) {return mm/25.4;}
 
     //
-    double MCL::traceRayToWallDistance(pose robotPose, field fieldDimensions, int maxRange) {
+    double MCL::traceRayToWallDistance(pose robotPose, field fieldDimensions, wall selectedWall, sensor selectedSensor, int maxRange) {
         // TODO: Find the sensor pose and trace the ray to the wall.
+
+        // Step one: find pose of the sensor
+        pose sensorPose;
+
+        //sensorPose.x = selectedSensor.
+
         return maxRange;
     }
     
-    MCL::MCL(lemlib::TrackingWheelOdometry& odom, std::vector<distSensor> distSensors, field field, rd::Console& console)
-        : odom(odom) {
+    MCL::MCL(lemlib::Chassis& chassis, sensorConfig distSensors, field field, rd::Console& console)
+        : chassis(chassis), console(console) {
         // Constructor implementation for creating the MCL object with data
         
 
@@ -78,8 +84,8 @@ namespace localization {
         // 
         // The robot takes in deltaPose using odometry and prpagates all particles in the same way as the bot moved
 
-        const auto odomPose = odom.getPose();
-        newPose = {to_in(odomPose.x), to_in(odomPose.y), to_cDeg(odomPose.orientation)};
+        const auto chassisPose = chassis.getPose();
+        newPose = {chassisPose.x, chassisPose.y, chassisPose.theta};
         
         deltaPose.x = newPose.x - oldPose.x;
         deltaPose.y = newPose.y - oldPose.y;
